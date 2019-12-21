@@ -1,7 +1,7 @@
 import {
     SIGN_IN,
     SIGN_UP,
-    SIGN_OUT
+    SIGN_OUT, RESERVE_MOVIE_SCREEN
 } from '../actions/types';
 
 const initialState = {
@@ -15,6 +15,8 @@ export default (state = initialState, action) => {
             return {...state, user: action.payload};
         case SIGN_OUT:
             return {...state, user: null};
+        case RESERVE_MOVIE_SCREEN:
+            return {...state, user: action.payload.user};
         default:
             return state;
     }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Card} from "react-bootstrap";
+import {Link} from "react-router-dom";
 
 class MovieCard extends Component {
     removeMovie = () => {
@@ -7,7 +8,7 @@ class MovieCard extends Component {
     };
 
     render() {
-        const {poster, title, genre, length, admin} = this.props;
+        const {poster, title, genre, length, admin, _id} = this.props;
         return (
             <div style={{marginTop: "10px", marginBottom: "10px"}}>
                 <Card>
@@ -26,7 +27,9 @@ class MovieCard extends Component {
                         <Card.Text><strong>Length:</strong> {length} minutes</Card.Text>
                     </Card.Body>
                     <Card.Footer>
-                        <Button block>{admin ? "Add Screen" : "Reserve"}</Button>
+                        <Link to={admin ? `movies/${_id}/addscreen` : `movies/${_id}/reserve`}>
+                            <Button block>{admin ? "Add Screen" : "Reserve"}</Button>
+                        </Link>
                     </Card.Footer>
                 </Card>
             </div>

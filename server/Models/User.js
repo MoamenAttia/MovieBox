@@ -57,24 +57,24 @@ const userSchema = new mongoose.Schema({
 
 
 userSchema.methods.toJSON = function () {
-    const user = this
-    const userObject = user.toObject()
-    delete userObject.password
-    delete userObject.birthDate
-    delete userObject.createdAt
-    delete userObject.updatedAt
-    delete userObject__v
-    return userObject
-}
+    const user = this;
+    const userObject = user.toObject();
+    delete userObject.password;
+    delete userObject.birthDate;
+    delete userObject.createdAt;
+    delete userObject.updatedAt;
+    delete userObject__v;
+    return userObject;
+};
 
 userSchema.statics.findByCredentials = async (username, password) => {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({username});
     if (!user) {
-        throw new Error('Unable to login');
+        throw new Error('Wrong username');
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        throw new Error('Unable to login')
+        throw new Error('Wrong password')
     }
     return user
 }

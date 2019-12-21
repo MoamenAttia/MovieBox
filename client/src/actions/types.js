@@ -11,3 +11,4 @@ export const ADD_MOVIE = "ADD_MOVIE";
 export const ERROR = "ERROR";
 export const SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
 export const HIDE_NOTIFICATION = "HIDE_NOTIFICATION";
+export const FETCH_SCREEN = "FETCH_SCREEN";

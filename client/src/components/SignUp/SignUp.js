@@ -18,7 +18,6 @@ class SignUp extends React.Component {
         this.props.handleSignUp(username, password, email, firstName, lastName, birthDate);
     };
 
-
     render() {
         return (
             <div>

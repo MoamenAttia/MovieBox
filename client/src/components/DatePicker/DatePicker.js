@@ -42,9 +42,9 @@ class renderDatePicker extends React.Component {
             <div>
                 <DatePicker
                     {...input}
+                    autoComplete='off'
                     placeholder={placeholder}
-                    dateFormat="YYYY-MM-DD"
-                    selected={input.value ? new Date(moment(input.value,)) : null}
+                    selected={input.value ? new Date(moment(input.value)) : null}
                     onChange={this.handleChange}
                 />
                 {touched && error && <span>{error}</span>}

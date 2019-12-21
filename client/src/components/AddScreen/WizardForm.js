@@ -1,9 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import SelectDayOfShow from './SelectDayOfShow'
+import SelectDayOfShow from './SelectDayOfShow';
 import SelectRoom from './SelectRoom'
-import WizardFormThirdPage from './Screen'
-import {getMovieScreens, fetchScreen} from "../../actions";
+import {fetchScreen} from "../../actions";
 import {connect} from "react-redux";
 import {change as reduxChange} from "redux-form";
 
@@ -33,12 +32,11 @@ class WizardForm extends Component {
     };
 
     onPartyClicked = (screenId) => {
-        this.setState({screenId})
-        this.nextPage()
+        this.setState({screenId});
+        this.nextPage();
     };
 
     render() {
-        const {onSubmit} = this.props;
         const {page} = this.state;
         return (
             <div>
@@ -51,13 +49,6 @@ class WizardForm extends Component {
                         previousPage={this.previousPage}
                         onPartyClicked={this.onPartyClicked}
                         onSubmit={this.nextPage}
-                    />
-                )}
-                {page === 3 && (
-                    <WizardFormThirdPage
-                        screenId={this.state.screenId}
-                        previousPage={this.previousPage}
-                        onSubmit={onSubmit}
                     />
                 )}
             </div>

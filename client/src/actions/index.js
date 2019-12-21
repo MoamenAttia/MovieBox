@@ -3,6 +3,7 @@ import {
     GET_AVAILABLE_SCREENS,
     FETCH_MOVIES,
     GET_MOVIE_SCREENS,
+    FETCH_SCREEN,
     SIGN_IN,
     SIGN_UP,
     SIGN_OUT,
@@ -58,6 +59,15 @@ export const removeMovie = (_id) => async dispatch => {
     }
 };
 
+export const fetchScreen = _id => async dispatch => {
+    try {
+        const response = await axios.get(`/screens/${_id}`);
+        dispatch({type: FETCH_SCREEN, payload: response.data});
+    } catch (error) {
+        handleError(error, dispatch)
+    }
+};
+
 export const getMovieScreens = (day, month, year, _id) => async dispatch => {
     const response = await axios.get(`/movies/${_id}/screens`, {
         params: {
@@ -70,18 +80,34 @@ export const getMovieScreens = (day, month, year, _id) => async dispatch => {
 };
 
 export const addScreen = (day, month, year, screenNumber, party, _id) => async dispatch => {
-    const response = await axios.post(`/movies/${_id}/assignscreen`, {day, month, year, _id, screenNumber, party});
+    const response = await axios.post(`/movies/${_id}/assignscreen`, {
+        day,
+        month,
+        year,
+        movieId: _id,
+        screenNumber,
+        party
+    });
     dispatch({type: ASSIGN_SCREEN, payload: response.data});
 };
 
 export const getAvailableScreens = (day, month, year, _id) => async dispatch => {
-    const response = await axios.post(`/movies/${_id}/available_screens`, {day, month, year});
+    const response = await axios.get(`/movies/${_id}/available_screens`, {
+        params: {
+            day, month, year
+        }
+    });
     dispatch({type: GET_AVAILABLE_SCREENS, payload: response.data});
 };
 
 export const reserveMovie = (screenId, userId, row, col) => async dispatch => {
-    const response = await axios.post(`/screens/${screenId}`, {userId, row, col});
-    dispatch({type: RESERVE_MOVIE_SCREEN, payload: response.data});
+    try {
+        const response = await axios.post(`/screens/${screenId}`, {userId, row, col});
+        dispatch({type: RESERVE_MOVIE_SCREEN, payload: response.data});
+    } catch (error) {
+        handleError(error, dispatch);
+    }
+
 };
 
 export const addMovie = (title, poster, genre, length) => async dispatch => {
@@ -116,13 +142,15 @@ function showPopUp(message, dispatch) {
 }
 
 function handleError(error, dispatch) {
-    console.log(error.response)
     if (error && error.response && error.response.data && error.response.data.message) {
         dispatch({type: ERROR, payload: error.response.data.message});
         showPopUp(error.response.data.message, dispatch);
     } else if (error && error.response && error.response.data && error.response.data.errmsg) {
         dispatch({type: ERROR, payload: error});
         showPopUp(error.response.data.errmsg, dispatch);
+    } else if (error && error.response && error.response.data && error.response.data.message) {
+        dispatch({type: ERROR, payload: error});
+        showPopUp(error.response.data.message, dispatch);
     } else {
         dispatch({type: error.message, payload: error});
         showPopUp(ERROR, dispatch);

@@ -52,7 +52,7 @@ router.get("/movies/:id", async (req, res) => {
 });
 
 router.get("/movies/:id/available_screens", async (req, res) => {
-    const {day, month, year} = req.params;
+    const {day, month, year} = req.query;
     try {
         const availableParties = await AssignScreen.findAvailableScreens(day, month, year);
         res.status(200).send(availableParties);
@@ -64,8 +64,8 @@ router.get("/movies/:id/available_screens", async (req, res) => {
 
 router.post("/movies/:id/assignscreen", async (req, res) => {
     const seats = [];
-    const rows = 10;
-    const cols = 10;
+    const rows = 12;
+    const cols = 12;
     for (let i = 0; i < rows; ++i) {
         seats.push([]);
         for (let j = 0; j < cols; ++j) {
@@ -85,9 +85,11 @@ router.post("/movies/:id/assignscreen", async (req, res) => {
 });
 
 router.get("/movies/:id/screens", async (req, res) => {
-    const {_id, day, month, year} = req.params;
+    const id = req.params.id;
+    const {day, month, year} = req.query;
     try {
-        const activeScreens = await AssignScreen.findScreenForAMovie(day, month, year, _id);
+        const activeScreens = await AssignScreen.findScreenForAMovie(day, month, year, id);
+
         res.status(200).send(activeScreens);
     } catch (error) {
         console.log(JSON.stringify(error));

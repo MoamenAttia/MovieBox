@@ -11,7 +11,8 @@ import SignUp from "./components/SignUp/index"
 import AddMovieContainer from "./components/AddMovie";
 import Navigation from "./components/Navigation";
 import Notification from "./components/Notification/Notification";
-// import Reserve from "./components/Reserve"
+import Reserve from "./components/Reserve"
+import AddScreen from "./components/AddScreen"
 
 function App() {
     return (
@@ -23,6 +24,8 @@ function App() {
                         <Route path="/" component={Home} exact/>
                         <Route path="/sign_up" component={SignUp} exact/>
                         <Route path="/add_movie" component={AddMovieContainer} exact/>
+                        <Route path="/movies/:id/reserve" component={Reserve} exact/>
+                        <Route path="/movies/:id/addscreen" component={AddScreen} exact/>
                     </Switch>
                 </div>
             </Router>

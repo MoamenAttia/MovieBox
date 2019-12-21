@@ -16,8 +16,9 @@ export default (state = initialState, action) => {
         case FETCH_MOVIES:
             return {...state, movies: _.mapKeys(action.payload, '_id')};
         case GET_MOVIE_SCREENS:
-            const movie = state.movies[action.payload._id].screens = action.payload.screens;
-            return {...state, [movie._id]: {...movie}};
+            const movie = state.movies[action.payload._id];
+            movie.screens = action.payload.screens;
+            return {...state, movies: {...state.movies, [movie._id]: {...movie}}};
         case ADD_MOVIE:
             return {...state, movies: {...state.movies, [action.payload._id]: action.payload}};
         case REMOVE_MOVIE:

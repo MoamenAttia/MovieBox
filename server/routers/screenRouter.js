@@ -1,35 +1,58 @@
 const express = require('express');
 const router = new express.Router();
 const Screen = require("../Models/Screen.js");
-
+const User = require("../Models/User.js");
 
 router.get("/screens/:id", async (req, res) => {
     const _id = req.params.id;
     try {
-        let screen = await Screen.findOne({ _id });
+        let screen = await Screen.findOne({_id});
         res.status(200).send(screen);
     } catch (error) {
         console.log(JSON.stringify(error));
         res.status(400).send(error.message);
     }
-})
+});
 
 // reserve
 router.post("/screens/:id", async (req, res) => {
-    // TODO => UserID Missing, Return the ticket also.
     const _id = req.params.id;
     try {
-        const row = req.body.row;
-        const col = req.body.col;
-        const screen = await Screen.find({ _id });
-        if (screen.seats[row][col]) {
-            res.status(403).send({ message: "Already Reserved", seats: screen.seats });
+        const {userId, row, col} = req.body;
+        let screen = await Screen.findOne({_id});
+        let currentUser = await User.findOne({_id: userId});
+        let mySeat = 0;
+        currentUser.tickets.forEach(ticket => {
+            if(ticket.screenId === _id && ticket.row === row && ticket.col === col){
+                mySeat = 1;
+            }
+        });
+        if (screen.seats[row][col] && !mySeat) {
+            res.status(403).send({message: "Already Reserved", seats: screen.seats});
         }
-        res.status(201).send("Reserved Successfully");
+        if (screen.seats[row][col] && mySeat) {
+            const rowSeats = screen.seats[row];
+            rowSeats[col] = 0;
+            screen.seats.set(row, rowSeats);
+            screen = await screen.save();
+            let tickets = currentUser.tickets;
+            tickets = tickets.filter(ticket => !(ticket.col === col && ticket.row === row && ticket.screenId === _id));
+            currentUser.tickets = tickets;
+            currentUser = await currentUser.save();
+            res.status(201).send({screen, user: currentUser});
+        }else{
+            const rowSeats = screen.seats[row];
+            rowSeats[col] = 1;
+            screen.seats.set(row, rowSeats);
+            screen = await screen.save();
+            currentUser.tickets.push({row, col, screenId: _id});
+            currentUser = await currentUser.save();
+            res.status(201).send({screen, user: currentUser});
+        }
     } catch (error) {
         console.log(JSON.stringify(error));
         res.status(400).send(error.message);
     }
-})
+});
 
 module.exports = router;
