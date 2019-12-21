@@ -31,8 +31,11 @@ class Home extends Component {
 
 
     render() {
-        const {user, movies} = this.props;
+        let {user, movies} = this.props;
         const isAdmin = user && user.type === 'admin';
+        if (this.props.searchValue !== "") {
+            movies = movies.filter(movie => movie.title.toLowerCase().includes(this.props.searchValue.toLowerCase()))
+        }
         return (
             <div>
                 {!user && (<SignIn handleSignIn={this.handleSignIn}/>)}

@@ -14,24 +14,32 @@ import Notification from "./components/Notification/Notification";
 import Reserve from "./components/Reserve"
 import AddScreen from "./components/AddScreen"
 
-function App() {
-    return (
-        <div className="App">
-            <Router>
-                <div>
-                    <Navigation />
-                    <Switch>
-                        <Route path="/" component={Home} exact/>
-                        <Route path="/sign_up" component={SignUp} exact/>
-                        <Route path="/add_movie" component={AddMovieContainer} exact/>
-                        <Route path="/movies/:id/reserve" component={Reserve} exact/>
-                        <Route path="/movies/:id/addscreen" component={AddScreen} exact/>
-                    </Switch>
-                </div>
-            </Router>
-            <Notification />
-        </div>
-    );
+
+class App extends React.Component {
+    state = {searchValue: ""}
+    onSearchBoxChange = (searchValue) => {
+        this.setState({searchValue})
+    };
+
+    render() {
+        return (
+            <div className="App">
+                <Router>
+                    <div>
+                        <Navigation onSearchBoxChange={this.onSearchBoxChange}/>
+                        <Switch>
+                            <Route path="/" component={() => <Home searchValue={this.state.searchValue}/>} exact/>
+                            <Route path="/sign_up" component={SignUp} exact/>
+                            <Route path="/add_movie" component={AddMovieContainer} exact/>
+                            <Route path="/movies/:id/reserve" component={Reserve} exact/>
+                            <Route path="/movies/:id/addscreen" component={AddScreen} exact/>
+                        </Switch>
+                    </div>
+                </Router>
+                <Notification/>
+            </div>
+        );
+    }
 }
 
 export default App;
