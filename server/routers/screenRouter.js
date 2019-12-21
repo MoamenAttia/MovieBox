@@ -10,12 +10,13 @@ router.get("/screens/:id", async (req, res) => {
         res.status(200).send(screen);
     } catch (error) {
         console.log(JSON.stringify(error));
-        res.status(500).send(error.message);
+        res.status(400).send(error.message);
     }
 })
 
 // reserve
 router.post("/screens/:id", async (req, res) => {
+    // TODO => UserID Missing, Return the ticket also.
     const _id = req.params.id;
     try {
         const row = req.body.row;
@@ -27,7 +28,7 @@ router.post("/screens/:id", async (req, res) => {
         res.status(201).send("Reserved Successfully");
     } catch (error) {
         console.log(JSON.stringify(error));
-        res.status(500).send(error.message);
+        res.status(400).send(error.message);
     }
 })
 

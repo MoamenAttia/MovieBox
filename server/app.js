@@ -5,7 +5,7 @@ const movieRouter = require("./routers/movieRouter.js");
 const screenRouter = require("./routers/screenRouter.js");
 
 const app = express(); // configuring the server
-const port = 3000;
+const port = 3001;
 
 // OMDB API KEY apikey=cf8ba8c7
 

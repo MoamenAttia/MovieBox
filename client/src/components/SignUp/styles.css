@@ -1,0 +1,13 @@
+.my-form {
+    width: 30%;
+    margin: 50px auto;
+}
+
+.sign-in-btn{
+    width: 150px;
+    margin: 10px auto;
+}
+
+.react-datepicker-wrapper, .react-datepicker__input-container {
+    display: block;
+}

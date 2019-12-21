@@ -4,14 +4,17 @@ const movieSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        minlength: 2,
     },
     genre: {
         type: String,
         required: true,
+        minlength: 3,
     },
     length: {
         type: Number,
-        required: true
+        required: true,
+        min: 10
     },
     poster: {
         type: String,
@@ -19,17 +22,17 @@ const movieSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true
-})
+});
 
 
 movieSchema.statics.findMovieById = async movieId => {
-    const movie = await Movie.findOne({ movieId });
+    const movie = await Movie.findOne({movieId});
     if (!movie) {
         throw new Error('Unable to find this movie');
     }
     return movie
-}
+};
 
-const Movie = mongoose.model('Movie', movieSchema)
+const Movie = mongoose.model('Movie', movieSchema);
 
-module.exports = Movie
+module.exports = Movie;

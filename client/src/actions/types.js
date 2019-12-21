@@ -1,0 +1,13 @@
+export const SIGN_IN = "LOG_IN";
+export const SIGN_UP = "LOG_UP";
+export const SIGN_OUT = "SIGN_OUT";
+export const FETCH_MOVIES = "FETCH_MOVIES";
+export const REMOVE_MOVIE = "REMOVE_MOVIE";
+export const ASSIGN_SCREEN = "ASSIGN_SCREEN";
+export const GET_AVAILABLE_SCREENS = "GET_AVAILABLE_SCREENS";
+export const GET_MOVIE_SCREENS = "GET_MOVIE_SCREENS";
+export const RESERVE_MOVIE_SCREEN = "RESERVE_MOVIE_SCREEN";
+export const ADD_MOVIE = "ADD_MOVIE";
+export const ERROR = "ERROR";
+export const SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
+export const HIDE_NOTIFICATION = "HIDE_NOTIFICATION";
