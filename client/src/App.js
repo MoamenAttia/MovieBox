@@ -13,6 +13,7 @@ import Navigation from "./components/Navigation";
 import Notification from "./components/Notification/Notification";
 import Reserve from "./components/Reserve"
 import AddScreen from "./components/AddScreen"
+import NotFound from "./components/NotFound";
 
 
 class App extends React.Component {
@@ -33,6 +34,7 @@ class App extends React.Component {
                             <Route path="/add_movie" component={AddMovieContainer} exact/>
                             <Route path="/movies/:id/reserve" component={Reserve} exact/>
                             <Route path="/movies/:id/addscreen" component={AddScreen} exact/>
+                            <Route component={NotFound} />
                         </Switch>
                     </div>
                 </Router>

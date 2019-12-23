@@ -27,7 +27,6 @@ router.delete("/movies/:id", async (req, res) => {
     }
 });
 
-
 // get all movies.
 router.get("/movies", async (req, res) => {
     try {
@@ -89,7 +88,6 @@ router.get("/movies/:id/screens", async (req, res) => {
     const {day, month, year} = req.query;
     try {
         const activeScreens = await AssignScreen.findScreenForAMovie(day, month, year, id);
-
         res.status(200).send(activeScreens);
     } catch (error) {
         console.log(JSON.stringify(error));
