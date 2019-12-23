@@ -7,11 +7,23 @@ import {Button, Col, Image, Row} from "react-bootstrap";
 import screenImage from '../../images/cinema.jpg';
 import Seat from "../Hall/Seat";
 
+
 class Screen extends React.Component {
+    state = {
+        intervalVar: null
+    };
+
+
     componentDidMount() {
-        setInterval(() => {
-            this.props.fetchScreen(this.props.screenId)
-        }, 500)
+        this.setState({
+            intervalVar: setInterval(() => {
+                this.props.fetchScreen(this.props.screenId)
+            }, 500)
+        })
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalVar);
     }
 
     render() {
