@@ -9,7 +9,9 @@ import Seat from "../Hall/Seat";
 
 class Screen extends React.Component {
     componentDidMount() {
-        this.props.fetchScreen(this.props.screenId)
+        setInterval(() => {
+            this.props.fetchScreen(this.props.screenId)
+        }, 500)
     }
 
     render() {

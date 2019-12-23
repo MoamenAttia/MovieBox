@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -51,10 +51,16 @@ const userSchema = new mongoose.Schema({
     tickets: {
         type: Array,
         default: []
-    }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }],
 }, {
     timestamps: true
-})
+});
 
 
 userSchema.methods.toJSON = function () {
@@ -64,8 +70,17 @@ userSchema.methods.toJSON = function () {
     delete userObject.birthDate;
     delete userObject.createdAt;
     delete userObject.updatedAt;
-    delete userObject__v;
+    delete userObject.tokens;
     return userObject;
+};
+
+
+userSchema.methods.generateAuthToken = async function () {
+    const user = this;
+    const token = jwt.sign({_id: user._id}, "movie-box");
+    user.tokens = user.tokens.concat({token});
+    await user.save();
+    return token
 };
 
 userSchema.statics.findByCredentials = async (username, password) => {
@@ -78,7 +93,7 @@ userSchema.statics.findByCredentials = async (username, password) => {
         throw new Error('Wrong password')
     }
     return user
-}
+};
 
 // Hash the plain text password before saving
 userSchema.pre('save', async function (next) {

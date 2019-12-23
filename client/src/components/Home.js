@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
-import {signIn, removeMovie, fetchMovies} from "../actions";
+import {signIn, removeMovie, fetchMovies, whoAmI} from "../actions";
 import {Link} from "react-router-dom";
 // Components
 import SignIn from "./SignIn/SignIn";
 import {Row, Col, Button} from "react-bootstrap";
 import MovieCard from "./MovieCard";
 import Notification from "./Notification/Notification";
+
 
 class Home extends Component {
     handleSignIn = (username, password) => {
@@ -17,6 +18,13 @@ class Home extends Component {
         this.props.removeMovie(_id)
     };
 
+    componentWillMount() {
+        const token = localStorage.getItem("userToken");
+        if (token && !this.props.user) {
+            this.props.whoAmI(token);
+        }
+    }
+
     componentDidMount() {
         if (this.props.user) {
             this.props.fetchMovies()
@@ -25,7 +33,9 @@ class Home extends Component {
 
     componentWillReceiveProps(nextProps, nextContext) {
         if (nextProps.user !== this.props.user) {
-            this.props.fetchMovies()
+            if (nextProps.user) {
+                this.props.fetchMovies()
+            }
         }
     }
 
@@ -43,7 +53,8 @@ class Home extends Component {
                     <div>
                         <Row>
                             {movies.map(movie => (
-                                <Col xs={3}><MovieCard {...movie} removeMovie={this.removeMovie} admin={isAdmin}/></Col>
+                                <Col xs={3}><MovieCard {...movie} removeMovie={this.removeMovie}
+                                                       admin={isAdmin}/></Col>
                             ))}
                         </Row>
                         {user.type === 'admin' && (<Link to="/add_movie">
@@ -64,8 +75,14 @@ class Home extends Component {
     }
 }
 
-const mapStateToProps = (store) => {
-    return {user: store.user.user, movies: Object.values(store.movies.movies), signInForm: store.form.signInForm}
-};
+const
+    mapStateToProps = (store) => {
+        return {user: store.user.user, movies: Object.values(store.movies.movies), signInForm: store.form.signInForm}
+    };
 
-export default connect(mapStateToProps, {signIn, removeMovie, fetchMovies})(Home);
+export default connect(mapStateToProps, {signIn, removeMovie, fetchMovies, whoAmI})
+
+(
+    Home
+)
+;

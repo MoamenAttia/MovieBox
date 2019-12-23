@@ -2,8 +2,9 @@ const express = require('express');
 const router = new express.Router();
 const Screen = require("../Models/Screen.js");
 const User = require("../Models/User.js");
+const auth = require("../middleware/auth.js");
 
-router.get("/screens/:id", async (req, res) => {
+router.get("/screens/:id", auth, async (req, res) => {
     const _id = req.params.id;
     try {
         let screen = await Screen.findOne({_id});
@@ -15,7 +16,7 @@ router.get("/screens/:id", async (req, res) => {
 });
 
 // reserve
-router.post("/screens/:id", async (req, res) => {
+router.post("/screens/:id", auth, async (req, res) => {
     const _id = req.params.id;
     try {
         const {userId, row, col} = req.body;
@@ -23,7 +24,7 @@ router.post("/screens/:id", async (req, res) => {
         let currentUser = await User.findOne({_id: userId});
         let mySeat = 0;
         currentUser.tickets.forEach(ticket => {
-            if(ticket.screenId === _id && ticket.row === row && ticket.col === col){
+            if (ticket.screenId === _id && ticket.row === row && ticket.col === col) {
                 mySeat = 1;
             }
         });
@@ -40,7 +41,7 @@ router.post("/screens/:id", async (req, res) => {
             currentUser.tickets = tickets;
             currentUser = await currentUser.save();
             res.status(201).send({screen, user: currentUser});
-        }else{
+        } else {
             const rowSeats = screen.seats[row];
             rowSeats[col] = 1;
             screen.seats.set(row, rowSeats);

@@ -5,9 +5,13 @@ const router = new express.Router();
 const Movie = require("../Models/Movie.js");
 const AssignScreen = require("../Models/AssignScreen.js");
 const Screen = require("../Models/Screen.js");
+const auth = require("../middleware/auth.js");
 
 // create movie.
-router.post("/movies", async (req, res) => {
+router.post("/movies", auth, async (req, res) => {
+    if (req.user.type !== 'admin') {
+        res.send(403).send({message: "Admin Only!!"});
+    }
     const movie = new Movie(req.body);
     try {
         let newMovie = await movie.save();
@@ -17,7 +21,10 @@ router.post("/movies", async (req, res) => {
     }
 });
 
-router.delete("/movies/:id", async (req, res) => {
+router.delete("/movies/:id", auth, async (req, res) => {
+    if (req.user.type !== 'admin') {
+        res.send(403).send({message: "Admin Only!!"});
+    }
     try {
         let newMovie = await Movie.findOne({_id: req.params.id});
         await newMovie.remove();
@@ -28,7 +35,7 @@ router.delete("/movies/:id", async (req, res) => {
 });
 
 // get all movies.
-router.get("/movies", async (req, res) => {
+router.get("/movies", auth, async (req, res) => {
     try {
         const movies = await Movie.find({});
         res.status(200).send(movies);
@@ -50,7 +57,10 @@ router.get("/movies/:id", async (req, res) => {
     }
 });
 
-router.get("/movies/:id/available_screens", async (req, res) => {
+router.get("/movies/:id/available_screens", auth, async (req, res) => {
+    if (req.user.type !== 'admin') {
+        res.send(403).send({message: "Admin Only!!"});
+    }
     const {day, month, year} = req.query;
     try {
         const availableParties = await AssignScreen.findAvailableScreens(day, month, year);
@@ -61,7 +71,10 @@ router.get("/movies/:id/available_screens", async (req, res) => {
     }
 });
 
-router.post("/movies/:id/assignscreen", async (req, res) => {
+router.post("/movies/:id/assignscreen", auth, async (req, res) => {
+    if (req.user.type !== 'admin') {
+        res.send(403).send({message: "Admin Only!!"});
+    }
     const seats = [];
     const rows = 12;
     const cols = 12;
@@ -83,7 +96,7 @@ router.post("/movies/:id/assignscreen", async (req, res) => {
     }
 });
 
-router.get("/movies/:id/screens", async (req, res) => {
+router.get("/movies/:id/screens", auth, async (req, res) => {
     const id = req.params.id;
     const {day, month, year} = req.query;
     try {

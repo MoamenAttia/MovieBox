@@ -9,15 +9,31 @@ import {
     SIGN_OUT,
     REMOVE_MOVIE,
     RESERVE_MOVIE_SCREEN,
+    WHO_AM_I,
     ERROR, ADD_MOVIE, SHOW_NOTIFICATION, HIDE_NOTIFICATION
 } from "./types"
 import axios from "../apis"
 
+
+export const whoAmI = (token) => async dispatch => {
+    try {
+        let response = await axios.get("/users/me", {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        })
+        dispatch({type: SIGN_IN, payload: response.data});
+    } catch (error) {
+        handleError(error, dispatch);
+    }
+};
+
 export const signIn = (username, password) => async dispatch => {
     try {
         let response = await axios.post('/users/login', {username, password});
-        dispatch({type: SIGN_IN, payload: response.data});
-        showPopUp(`Welcome ${response.data.firstName}`, dispatch);
+        localStorage.setItem("userToken", response.data.token);
+        dispatch({type: SIGN_IN, payload: response.data.user});
+        showPopUp(`Welcome ${response.data.user.firstName}`, dispatch);
     } catch (error) {
         handleError(error, dispatch)
     }
@@ -26,23 +42,39 @@ export const signIn = (username, password) => async dispatch => {
 export const signUp = (username, password, email, firstName, lastName, birthDate) => async dispatch => {
     try {
         let response = await axios.post('/users', {username, password, email, firstName, lastName, birthDate});
-        dispatch({type: SIGN_UP, payload: response.data});
+        localStorage.setItem("userToken", response.data.token);
+        dispatch({type: SIGN_UP, payload: response.data.user});
         showPopUp(`Welcome ${firstName}`, dispatch);
     } catch (error) {
         handleError(error, dispatch)
     }
 };
 
-
 export const signOut = () => async dispatch => {
-    dispatch({type: SIGN_OUT});
-    showPopUp("Sign Out Successfully", dispatch);
+    try {
+        let token = localStorage.getItem("userToken");
+        await axios.post("/users/logout", {}, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        localStorage.removeItem("userToken");
+        dispatch({type: SIGN_OUT});
+        showPopUp("Sign Out Successfully", dispatch);
+    } catch (error) {
+        dispatch({type: SIGN_OUT});
+        handleError(error, dispatch)
+    }
 };
-
 
 export const fetchMovies = () => async dispatch => {
     try {
-        const response = await axios.get('/movies');
+        let token = localStorage.getItem("userToken");
+        const response = await axios.get('/movies', {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
         dispatch({type: FETCH_MOVIES, payload: response.data});
     } catch (error) {
         handleError(error, dispatch);
@@ -51,7 +83,12 @@ export const fetchMovies = () => async dispatch => {
 
 export const removeMovie = (_id) => async dispatch => {
     try {
-        const response = await axios.delete(`/movies/${_id}`);
+        let token = localStorage.getItem("userToken");
+        const response = await axios.delete(`/movies/${_id}`, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
         dispatch({type: REMOVE_MOVIE, payload: response.data});
         showPopUp(`Title: ${response.data.title} Movie Removed Successfully`, dispatch)
     } catch (error) {
@@ -61,7 +98,12 @@ export const removeMovie = (_id) => async dispatch => {
 
 export const fetchScreen = _id => async dispatch => {
     try {
-        const response = await axios.get(`/screens/${_id}`);
+        let token = localStorage.getItem("userToken");
+        const response = await axios.get(`/screens/${_id}`, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
         dispatch({type: FETCH_SCREEN, payload: response.data});
     } catch (error) {
         handleError(error, dispatch)
@@ -69,40 +111,71 @@ export const fetchScreen = _id => async dispatch => {
 };
 
 export const getMovieScreens = (day, month, year, _id) => async dispatch => {
-    const response = await axios.get(`/movies/${_id}/screens`, {
-        params: {
-            day,
-            month,
-            year
-        }
-    });
-    dispatch({type: GET_MOVIE_SCREENS, payload: {screens: response.data, _id: _id}});
+    try {
+        let token = localStorage.getItem("userToken");
+        const response = await axios.get(`/movies/${_id}/screens`, {
+            params: {
+                day,
+                month,
+                year
+            },
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        dispatch({type: GET_MOVIE_SCREENS, payload: {screens: response.data, _id: _id}});
+    } catch (error) {
+        handleError(error, dispatch)
+    }
 };
 
 export const addScreen = (day, month, year, screenNumber, party, _id) => async dispatch => {
-    const response = await axios.post(`/movies/${_id}/assignscreen`, {
-        day,
-        month,
-        year,
-        movieId: _id,
-        screenNumber,
-        party
-    });
-    dispatch({type: ASSIGN_SCREEN, payload: response.data});
+    try {
+        let token = localStorage.getItem("userToken");
+        const response = await axios.post(`/movies/${_id}/assignscreen`, {
+            day,
+            month,
+            year,
+            movieId: _id,
+            screenNumber,
+            party
+        }, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        dispatch({type: ASSIGN_SCREEN, payload: response.data});
+    } catch (error) {
+        handleError(error, dispatch);
+    }
 };
 
 export const getAvailableScreens = (day, month, year, _id) => async dispatch => {
-    const response = await axios.get(`/movies/${_id}/available_screens`, {
-        params: {
-            day, month, year
-        }
-    });
-    dispatch({type: GET_AVAILABLE_SCREENS, payload: response.data});
+    try {
+        let token = localStorage.getItem("userToken");
+        const response = await axios.get(`/movies/${_id}/available_screens`, {
+            params: {
+                day, month, year
+            },
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+        dispatch({type: GET_AVAILABLE_SCREENS, payload: response.data});
+    } catch (error) {
+        handleError(error, dispatch);
+    }
+
 };
 
 export const reserveMovie = (screenId, userId, row, col) => async dispatch => {
     try {
-        const response = await axios.post(`/screens/${screenId}`, {userId, row, col});
+        let token = localStorage.getItem("userToken");
+        const response = await axios.post(`/screens/${screenId}`, {userId, row, col}, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
         dispatch({type: RESERVE_MOVIE_SCREEN, payload: response.data});
     } catch (error) {
         handleError(error, dispatch);
@@ -112,7 +185,12 @@ export const reserveMovie = (screenId, userId, row, col) => async dispatch => {
 
 export const addMovie = (title, poster, genre, length) => async dispatch => {
     try {
-        const response = await axios.post(`/movies`, {title, poster, genre, length});
+        let token = localStorage.getItem("userToken");
+        const response = await axios.post(`/movies`, {title, poster, genre, length}, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
         dispatch({type: ADD_MOVIE, payload: response.data});
         showPopUp("Movie Added Successfully", dispatch);
     } catch (error) {
@@ -141,7 +219,13 @@ function showPopUp(message, dispatch) {
     }, 2000)
 }
 
+
 function handleError(error, dispatch) {
+    if (error && error.response && error.response.status === 403) {
+        showPopUp("Admin Only", dispatch);
+    } else if (error && error.response && error.response.status === 401) {
+        showPopUp("Please Authenticate", dispatch);
+    }
     if (error && error.response && error.response.data && error.response.data.message) {
         dispatch({type: ERROR, payload: error.response.data.message});
         showPopUp(error.response.data.message, dispatch);
@@ -156,3 +240,4 @@ function handleError(error, dispatch) {
         showPopUp(ERROR, dispatch);
     }
 }
+
