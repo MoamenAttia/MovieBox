@@ -29,7 +29,7 @@ router.post("/screens/:id", auth, async (req, res) => {
             }
         });
         if (screen.seats[row][col] && !mySeat) {
-            res.status(400).send({message: "Already Reserved", seats: screen.seats});
+            return res.status(403).send({message: "Already Reserved", seats: screen.seats});
         }
         if (screen.seats[row][col] && mySeat) {
             const rowSeats = screen.seats[row];
@@ -40,7 +40,7 @@ router.post("/screens/:id", auth, async (req, res) => {
             tickets = tickets.filter(ticket => !(ticket.col === col && ticket.row === row && ticket.screenId === _id));
             currentUser.tickets = tickets;
             currentUser = await currentUser.save();
-            res.status(201).send({screen, user: currentUser});
+            return res.status(201).send({screen, user: currentUser});
         } else {
             const rowSeats = screen.seats[row];
             rowSeats[col] = 1;
@@ -48,7 +48,7 @@ router.post("/screens/:id", auth, async (req, res) => {
             screen = await screen.save();
             currentUser.tickets.push({row, col, screenId: _id});
             currentUser = await currentUser.save();
-            res.status(201).send({screen, user: currentUser});
+            return res.status(201).send({screen, user: currentUser});
         }
     } catch (error) {
         console.log(JSON.stringify(error));
