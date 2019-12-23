@@ -3,7 +3,7 @@ import WizardForm from "./WizardForm"
 import React, {Component} from 'react';
 import {Redirect} from "react-router";
 import {connect} from "react-redux";
-import {hideNotification, showNotification, whoAmI} from "../../actions";
+import {hideNotification, showNotification, whoAmI, fetchMovies} from "../../actions";
 
 class AddScreen extends Component {
     onSubmit = (formValues) => {
@@ -18,7 +18,9 @@ class AddScreen extends Component {
         if (token && !this.props.user) {
             this.setState({wait: true}, () => {
                 this.props.whoAmI(token).then(() => {
-                    this.setState({wait: false})
+                    this.props.fetchMovies().then(response => {
+                        this.setState({wait: false})
+                    })
                 })
             })
         }
@@ -47,5 +49,5 @@ class AddScreen extends Component {
 const mapStateToProps = (store) => {
     return {user: store.user.user};
 };
-export default connect(mapStateToProps, {showNotification, hideNotification, whoAmI})(AddScreen);
+export default connect(mapStateToProps, {showNotification, hideNotification, whoAmI, fetchMovies})(AddScreen);
 

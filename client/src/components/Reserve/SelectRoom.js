@@ -28,7 +28,7 @@ class SelectRoom extends React.Component {
                 <h1 style={{textAlign: "center", margin: "20px 0"}}>Select A Hall</h1>
                 <form style={{margin: "0 auto", textAlign: "center", width: "700px"}} onSubmit={handleSubmit}>
                     <Row>
-                        {this.props.movie.screens && Object.values(this.props.movie.screens).map((hall, idx) => (
+                        {this.props.movie && this.props.movie.screens && Object.values(this.props.movie.screens).map((hall, idx) => (
                             <Col xs={6}>
                                 <Hall onPartyClicked={this.onPartyClicked} hallNumber={idx + 1} parties={hall}/>
                             </Col>
