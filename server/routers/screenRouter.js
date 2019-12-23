@@ -29,7 +29,7 @@ router.post("/screens/:id", auth, async (req, res) => {
             }
         });
         if (screen.seats[row][col] && !mySeat) {
-            res.status(403).send({message: "Already Reserved", seats: screen.seats});
+            res.status(400).send({message: "Already Reserved", seats: screen.seats});
         }
         if (screen.seats[row][col] && mySeat) {
             const rowSeats = screen.seats[row];
